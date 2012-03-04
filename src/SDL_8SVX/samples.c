@@ -53,7 +53,7 @@ static Mix_Chunk *createMixChunks(_8SVX_Instrument *instrument, unsigned int *mi
     return mixChunks;
 }
 
-void resampleMixChunkFrequency(_8SVX_Instrument *instrument, Mix_Chunk *mixChunk, int frequency)
+static void resampleMixChunkFrequency(_8SVX_Instrument *instrument, Mix_Chunk *mixChunk, int frequency)
 {
     unsigned int i;
     void *handle;
@@ -89,7 +89,7 @@ void resampleMixChunkFrequency(_8SVX_Instrument *instrument, Mix_Chunk *mixChunk
     free(outBuffer);
 }
 
-void resampleMixChunkFormat(Mix_Chunk *mixChunk, Uint16 format, int frequency)
+static void resampleMixChunkFormat(Mix_Chunk *mixChunk, Uint16 format, int frequency)
 {
     SDL_AudioCVT cvt;
     
