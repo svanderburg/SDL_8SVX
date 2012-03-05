@@ -26,7 +26,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <fibdelta.h>
+#include <lib8svx/fibdelta.h>
 #include <SDL.h>
 #include <libresample.h>
 

@@ -25,7 +25,7 @@
 #ifndef __SDL_8SVX_SAMPLES_H
 #define __SDL_8SVX_SAMPLES_H
 
-#include <8svxinstrument.h>
+#include <lib8svx/8svxinstrument.h>
 #include <SDL_mixer.h>
 
 Mix_Chunk *SDL_8SVX_createResampledMixChunks(_8SVX_Instrument *instrument, Uint16 format, int frequency, unsigned int *mixChunksLength);
