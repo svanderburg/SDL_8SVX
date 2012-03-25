@@ -67,14 +67,14 @@ static void resampleMixChunkFrequency(_8SVX_Instrument *instrument, Mix_Chunk *m
     /* Open resample handle */
     handle = resample_open(TRUE, factor, factor);
     
-    /* Convert bytes to float */
+    /* Convert bytes to floats */
     for(i = 0; i < mixChunk->alen; i++)
 	inBuffer[i] = ((Sint8)mixChunk->abuf[i] + 0.5f) / 127.5f;
 
     /* Do resampling */
     resample_process(handle, factor, inBuffer, mixChunk->alen, TRUE, &inBufferUsed, outBuffer, outBufferLen);
     
-    /* Convert float to bytes */
+    /* Convert floats to bytes */
     for(i = 0; i < outBufferLen; i++)
 	abuf[i] = (127.5f * outBuffer[i]) - 0.5f;
     

@@ -82,6 +82,9 @@ int SDL_8SVX_play8SVXInstrument(const char *filename)
 		
 		Mix_CloseAudio();
 	    }
+	    
+	    /* Cleanup */
+	    free(mixChunks);
 	}
 	
 	SDL_Quit();
