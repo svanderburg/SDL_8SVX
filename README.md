@@ -1,6 +1,6 @@
-libSDL_8SVX
-===========
-libSDL_8SVX is a package containing a library for playing 8SVX instruments as
+SDL_8SVX
+========
+SDL_8SVX is a package containing a library for playing 8SVX instruments as
 well as command-line player: `8svxplayer`.
 
 Prerequisites
