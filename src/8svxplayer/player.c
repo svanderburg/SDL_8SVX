@@ -1,4 +1,4 @@
-/** 
+/*
  * Copyright (c) 2012 Sander van der Burg
  *
  * This software is provided 'as-is', without any express or implied warranty.
@@ -70,7 +70,7 @@ int SDL_8SVX_play8SVXInstrument(const char *filename)
 		int channel;
 		Mix_Chunk *mixChunk = &mixChunks[j];
 		
-		fprintf(stderr, "Octave: %d\n", j);
+		fprintf(stderr, "Octave: %u\n", j);
 		
 		if(Mix_OpenAudio(frequency, format, 1, 512) == -1)
 		    fprintf(stderr, "Cannot open mixer channel!\n");

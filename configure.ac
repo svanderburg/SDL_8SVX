@@ -48,6 +48,7 @@ AC_SUBST(SDL_LIBS)
 AC_CONFIG_FILES([
 Makefile
 src/Makefile
+src/SDL_8SVX.pc
 src/SDL_8SVX/Makefile
 src/8svxplayer/Makefile
 doc/Makefile
