@@ -25,7 +25,7 @@ let
         src = SDL_8SVX;
         inherit version officialRelease;
 
-        buildInputs = [ pkgconfig libiff lib8svx libresample SDL SDL_mixer ];
+        buildInputs = [ pkgconfig libiff lib8svx libresample SDL2 SDL2_mixer ];
       };
       
     build =
@@ -40,7 +40,7 @@ let
           name = "SDL_8SVX";
           inherit version;
           src = tarball;
-          buildInputs = [ pkgconfig libiff lib8svx libresample SDL SDL_mixer ];
+          buildInputs = [ pkgconfig libiff lib8svx libresample SDL2 SDL2_mixer ];
           LIBS="-lgcc_s";
         }
       );
