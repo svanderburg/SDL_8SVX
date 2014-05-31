@@ -41,7 +41,8 @@ let
           inherit version;
           src = tarball;
           buildInputs = [ pkgconfig libiff lib8svx libresample SDL2 SDL2_mixer ];
-          LIBS="-lgcc_s";
+          LIBS = "-lgcc_s";
+          CFLAGS = "-ansi -pedantic -Wall";
         }
       );
   };
