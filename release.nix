@@ -24,8 +24,9 @@ let
         name = "SDL_8SVX-tarball";
         src = SDL_8SVX;
         inherit version officialRelease;
+        dontBuild = false;
 
-        buildInputs = [ pkgconfig libiff lib8svx libresample SDL2 SDL2_mixer ];
+        buildInputs = [ pkgconfig libiff lib8svx libresample SDL2 SDL2_mixer help2man ];
       };
       
     build =

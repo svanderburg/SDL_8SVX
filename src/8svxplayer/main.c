@@ -28,8 +28,19 @@
 
 static void printUsage(const char *command)
 {
-    fprintf(stderr, "Usage:\n");
-    fprintf(stderr, "%s [options] file.ILBM\n", command);
+    printf("Usage: %s [OPTION] file.8SVX\n\n", command);
+    
+    printf("The command `8svxviewer' plays 8SVX instruments stored inside an IFF file.\n\n");
+    
+    printf("Options:\n");
+    printf("  -h, --help       Shows the usage of the command to the user\n");
+    printf("  -v, --version    Shows the version of the command to the user\n");
+}
+
+static void printVersion(const char *command)
+{
+    printf("%s (" PACKAGE_NAME ") " PACKAGE_VERSION "\n\n", command);
+    printf("Copyright (C) 2012-2015 Sander van der Burg\n");
 }
 
 int main(int argc, char *argv[])
@@ -38,29 +49,33 @@ int main(int argc, char *argv[])
     int c, option_index = 0;
     struct option long_options[] =
     {
-	{"help", no_argument, 0, 'h'},
-	{0, 0, 0, 0}
+        {"help", no_argument, 0, 'h'},
+        {"version", no_argument, 0, 'v'},
+        {0, 0, 0, 0}
     };
 
     /* Parse command-line options */
-    while((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1)
+    while((c = getopt_long(argc, argv, "hv", long_options, &option_index)) != -1)
     {
-	switch(c)
-	{
-	    case 'h':
-	    case '?':
-		printUsage(argv[0]);
-		return 0;
-	}
+        switch(c)
+        {
+            case 'h':
+            case '?':
+                printUsage(argv[0]);
+                return 0;
+            case 'v':
+                printVersion(argv[0]);
+                return 0;
+        }
     }
     
     /* Validate non options */
     
     if(optind >= argc)
     {
-	fprintf(stderr, "ERROR: No 8SVX file given!\n");
-	return 1;
+        fprintf(stderr, "ERROR: No 8SVX file given!\n");
+        return 1;
     }
     else
-	return SDL_8SVX_play8SVXInstrument(argv[optind]);
+        return SDL_8SVX_play8SVXInstrument(argv[optind]);
 }

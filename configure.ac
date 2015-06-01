@@ -9,6 +9,7 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 AM_PROG_CC_C_O
 PKG_PROG_PKG_CONFIG
+AC_PATH_PROG(HELP2MAN, help2man, false)
 
 # Checks for libiff library
 LIBIFF_REQUIRED=0.1
@@ -47,7 +48,5 @@ src/Makefile
 src/SDL_8SVX.pc
 src/SDL_8SVX/Makefile
 src/8svxplayer/Makefile
-doc/Makefile
-doc/man/Makefile
 ])
 AC_OUTPUT
