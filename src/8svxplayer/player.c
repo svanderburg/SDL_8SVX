@@ -32,7 +32,12 @@
 
 int SDL_8SVX_play8SVXInstrument(const char *filename)
 {
-    IFF_Chunk *chunk = _8SVX_read(filename);
+    IFF_Chunk *chunk;
+    
+    if(filename == NULL)
+        chunk = _8SVX_readFd(stdin);
+    else
+        chunk = _8SVX_read(filename);
     
     if(chunk == NULL)
     {

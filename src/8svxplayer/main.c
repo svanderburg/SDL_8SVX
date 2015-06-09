@@ -28,9 +28,10 @@
 
 static void printUsage(const char *command)
 {
-    printf("Usage: %s [OPTION] file.8SVX\n\n", command);
+    printf("Usage: %s [OPTION] [file.8SVX]\n\n", command);
     
-    printf("The command `8svxviewer' plays 8SVX instruments stored inside an IFF file.\n\n");
+    printf("The command `8svxviewer' plays 8SVX instruments stored inside an IFF file. If no file is\n");
+    printf("given, it reads from the standard input.\n\n");
     
     printf("Options:\n");
     printf("  -h, --help       Shows the usage of the command to the user\n");
@@ -53,6 +54,7 @@ int main(int argc, char *argv[])
         {"version", no_argument, 0, 'v'},
         {0, 0, 0, 0}
     };
+    char *filename;
 
     /* Parse command-line options */
     while((c = getopt_long(argc, argv, "hv", long_options, &option_index)) != -1)
@@ -72,10 +74,9 @@ int main(int argc, char *argv[])
     /* Validate non options */
     
     if(optind >= argc)
-    {
-        fprintf(stderr, "ERROR: No 8SVX file given!\n");
-        return 1;
-    }
+        filename = NULL;
     else
-        return SDL_8SVX_play8SVXInstrument(argv[optind]);
+        filename = argv[optind];
+    
+    return SDL_8SVX_play8SVXInstrument(filename);
 }
