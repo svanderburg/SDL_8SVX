@@ -22,7 +22,7 @@
  * Sander van der Burg <svanderburg@gmail.com>
  */
 
-#include "samples.h"
+#include "instrument.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -105,25 +105,42 @@ static void resampleMixChunkFormat(Mix_Chunk *mixChunk, Uint16 format, int frequ
     mixChunk->alen = mixChunk->alen * cvt.len_mult;
 }
 
-Mix_Chunk *SDL_8SVX_createResampledMixChunks(_8SVX_Instrument *instrument, Uint16 format, int frequency, unsigned int *mixChunksLength)
+SDL_8SVX_Instrument *SDL_8SVX_createInstrument(_8SVX_Instrument *instrument, Uint16 format, int frequency)
 {
-    Mix_Chunk *mixChunks;
-    unsigned int i;
+    SDL_8SVX_Instrument *_8svxInstrument = (SDL_8SVX_Instrument*)malloc(sizeof(SDL_8SVX_Instrument));
     
-    /* Decompress the instrument body chunk */
-    _8SVX_unpackFibonacciDelta(instrument);
-
-    /* Create mix chunks out of the sample data */
-    mixChunks = createMixChunks(instrument, mixChunksLength);
-    
-    /* Resample the mix chunks */
-    for(i = 0; i < *mixChunksLength; i++)
+    if(_8svxInstrument != NULL)
     {
-	Mix_Chunk *mixChunk = &mixChunks[i];
-	resampleMixChunkFrequency(instrument, mixChunk, frequency);
-	resampleMixChunkFormat(mixChunk, format, frequency);
+        unsigned int i;
+        
+        /* Attach parameters */
+        _8svxInstrument->instrument = instrument;
+        _8svxInstrument->format = format;
+        _8svxInstrument->frequency = frequency;
+        
+        /* Decompress the instrument body chunk */
+        _8SVX_unpackFibonacciDelta(instrument);
+
+        /* Create mix chunks out of the sample data */
+        _8svxInstrument->mixChunks = createMixChunks(instrument, &_8svxInstrument->mixChunksLength);
+        
+        /* Resample the mix chunks */
+        for(i = 0; i < _8svxInstrument->mixChunksLength; i++)
+        {
+            Mix_Chunk *mixChunk = &_8svxInstrument->mixChunks[i];
+            resampleMixChunkFrequency(instrument, mixChunk, frequency);
+            resampleMixChunkFormat(mixChunk, format, frequency);
+        }
     }
     
-    /* Return the resampled chunks */
-    return mixChunks;
+    return _8svxInstrument;
+}
+
+void SDL_8SVX_freeInstrument(SDL_8SVX_Instrument *instrument)
+{
+    if(instrument != NULL)
+    {
+        free(instrument->mixChunks);
+        free(instrument);
+    }
 }

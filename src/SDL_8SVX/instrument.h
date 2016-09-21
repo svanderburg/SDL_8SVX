@@ -22,12 +22,25 @@
  * Sander van der Burg <svanderburg@gmail.com>
  */
 
-#ifndef __SDL_8SVX_SAMPLES_H
-#define __SDL_8SVX_SAMPLES_H
+#ifndef __SDL_8SVX_INSTRUMENT_H
+#define __SDL_8SVX_INSTRUMENT_H
+
+typedef struct SDL_8SVX_Instrument SDL_8SVX_Instrument;
 
 #include <lib8svx/8svxinstrument.h>
 #include <SDL_mixer.h>
 
-Mix_Chunk *SDL_8SVX_createResampledMixChunks(_8SVX_Instrument *instrument, Uint16 format, int frequency, unsigned int *mixChunksLength);
+struct SDL_8SVX_Instrument
+{
+    _8SVX_Instrument *instrument;
+    Mix_Chunk *mixChunks;
+    unsigned int mixChunksLength;
+    Uint16 format;
+    int frequency;
+};
+
+SDL_8SVX_Instrument *SDL_8SVX_createInstrument(_8SVX_Instrument *instrument, Uint16 format, int frequency);
+
+void SDL_8SVX_freeInstrument(SDL_8SVX_Instrument *instrument);
 
 #endif

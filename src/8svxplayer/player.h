@@ -25,6 +25,6 @@
 #ifndef __SDL_8SVX_PLAYER_H
 #define __SDL_8SVX_PLAYER_H
 
-int SDL_8SVX_play8SVXInstrument(const char *filename);
+int SDL_8SVX_play8SVXSamples(const char *filename, unsigned int playAllInstruments, unsigned int instrumentNumber, unsigned int playAllSamples, unsigned int sampleNumber, int frequency);
 
 #endif

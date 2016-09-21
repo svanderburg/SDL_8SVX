@@ -24,79 +24,152 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <8svx.h>
-#include <8svxinstrument.h>
 #include <SDL.h>
 #include <SDL_mixer.h>
-#include "samples.h"
+#include "set.h"
 
-int SDL_8SVX_play8SVXInstrument(const char *filename)
+static int playSample(Mix_Chunk *mixChunk, unsigned int octave)
 {
-    IFF_Chunk *chunk;
+    int channel;
     
+    fprintf(stderr, "Octave: %u\n", octave);
+
+    if((channel = Mix_PlayChannel(-1, mixChunk, 0)) == -1)
+    {
+        fprintf(stderr, "Cannot play sample!\n");
+        return FALSE;
+    }
+
+    /* Wait for the channel to finish playing */
+    while(Mix_Playing(channel) != 0);
+    
+    return TRUE;
+}
+
+static int playSamplesFromInstrument(SDL_8SVX_Instrument *instrument, unsigned int playAllSamples, unsigned int sampleNumber)
+{
+    if(playAllSamples)
+    {
+        unsigned int i;
+    
+        for(i = 0; i < instrument->mixChunksLength; i++)
+        {
+            Mix_Chunk *mixChunk = &instrument->mixChunks[i];
+            
+            if(!playSample(mixChunk, i))
+                return FALSE;
+        }
+        
+        return TRUE;
+    }
+    else
+    {
+        if(sampleNumber > instrument->mixChunksLength)
+        {
+            fprintf(stderr, "Sample with index: %d does not exist. Valid ranges are: 0 - %d\n", sampleNumber, instrument->mixChunksLength);
+            return FALSE;
+        }
+        else
+        {
+            Mix_Chunk *mixChunk = &instrument->mixChunks[sampleNumber];
+            return playSample(mixChunk, sampleNumber);
+        }
+    }
+}
+
+int SDL_8SVX_play8SVXSamples(const char *filename, unsigned int playAllInstruments, unsigned int instrumentNumber, unsigned int playAllSamples, unsigned int sampleNumber, int frequency)
+{
+    Uint16 format = AUDIO_S16SYS;
+    SDL_8SVX_Set *set;
+    int exitStatus = 0;
+    
+    /* Open the 8SVX file and generate a set from it*/
     if(filename == NULL)
-        chunk = _8SVX_readFd(stdin);
+        set = SDL_8SVX_createSetFromFd(stdin);
     else
-        chunk = _8SVX_read(filename);
+        set = SDL_8SVX_createSetFromFilename(filename);
     
-    if(chunk == NULL)
+    if(set == NULL)
     {
-	fprintf(stderr, "Cannot open IFF file!\n");
-	return 1;
+        fprintf(stderr, "Error parsing 8SVX file!\n");
+        return 1;
+    }
+    
+    /* Initialise audio sub systems */
+    if(SDL_Init(SDL_INIT_AUDIO) == -1)
+    {
+        fprintf(stderr, "Cannot initialise audio!\n");
+        SDL_8SVX_freeSet(set);
+        return 1;
+    }
+    
+    if(Mix_OpenAudio(frequency, format, 1, 512) == -1)
+    {
+        fprintf(stderr, "Cannot open mixer channel!\n");
+        SDL_8SVX_freeSet(set);
+        SDL_Quit();
+        return 1;
+    }
+    
+    if(playAllInstruments)
+    {
+        /* Play the specified samples in all instruments */
+        unsigned int i;
+        
+        for(i = 0; i < set->instrumentsLength; i++)
+        {
+            SDL_8SVX_Instrument *instrument = SDL_8SVX_createInstrumentFromSet(set, i, format, frequency);
+            
+            if(instrument == NULL)
+            {
+                fprintf(stderr, "Cannot create instrument!\n");
+                exitStatus = 1;
+            }
+            else
+            {
+                if(!playSamplesFromInstrument(instrument, playAllSamples, sampleNumber))
+                    exitStatus = 1;
+                    
+                SDL_8SVX_freeInstrument(instrument);
+                
+                if(exitStatus != 0)
+                    break;
+            }
+        }
     }
     else
     {
-	unsigned int instrumentsLength;
-	_8SVX_Instrument **instruments;
-	unsigned int i;
-    
-	if(SDL_Init(SDL_INIT_AUDIO) == -1)
-	{
-	    fprintf(stderr, "Cannot initialise audio!\n");
-	    return 1;
-	}
-	
-	instruments = _8SVX_extractInstruments(chunk, &instrumentsLength);
-	
-	for(i = 0; i < instrumentsLength; i++)
-	{
-	    unsigned int j;
-	    _8SVX_Instrument *instrument = instruments[i];
-	    unsigned int mixChunksLength;
-	    Mix_Chunk *mixChunks;
-	    int frequency = 22050;
-	    Uint16 format = AUDIO_S16SYS;
-	    
-	    /* Extract resampled mix chunks */
-	    mixChunks = SDL_8SVX_createResampledMixChunks(instrument, format, frequency, &mixChunksLength);
-	    
-	    for(j = 0; j < mixChunksLength; j++)
-	    {
-		int channel;
-		Mix_Chunk *mixChunk = &mixChunks[j];
-		
-		fprintf(stderr, "Octave: %u\n", j);
-		
-		if(Mix_OpenAudio(frequency, format, 1, 512) == -1)
-		    fprintf(stderr, "Cannot open mixer channel!\n");
-		
-		if((channel = Mix_PlayChannel(-1, mixChunk, 0)) == -1)
-		    fprintf(stderr, "Cannot play sample!\n");
-		
-		while(Mix_Playing(channel) != 0);
-		
-		Mix_CloseAudio();
-	    }
-	    
-	    /* Cleanup */
-	    free(mixChunks);
-	}
-	
-	SDL_Quit();
-	
-	_8SVX_freeInstruments(instruments, instrumentsLength);
-	_8SVX_free(chunk);
-    
-	return 0;
+        if(instrumentNumber > set->instrumentsLength)
+        {
+            fprintf(stderr, "Instrument with index: %d does not exist. Valid ranges are: 0 - %d\n", instrumentNumber, set->instrumentsLength - 1);
+            exitStatus = 1;
+        }
+        else
+        {
+            /* Play the specified samples in the specified instrument */
+            SDL_8SVX_Instrument *instrument = SDL_8SVX_createInstrumentFromSet(set, instrumentNumber, format, frequency);
+            
+            if(instrument == NULL)
+            {
+                fprintf(stderr, "Cannot create instrument!\n");
+                exitStatus = 1;
+            }
+            else
+            {
+                if(!playSamplesFromInstrument(instrument, playAllSamples, sampleNumber))
+                    exitStatus = 0;
+            
+                SDL_8SVX_freeInstrument(instrument);
+            }
+        }
     }
+    
+    /* Clean up */
+    Mix_CloseAudio();
+    
+    SDL_8SVX_freeSet(set);
+    SDL_Quit();
+    
+    /* Return exit status */
+    return exitStatus;
 }
