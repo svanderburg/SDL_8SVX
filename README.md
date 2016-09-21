@@ -75,8 +75,8 @@ When the work is done, a set must be deallocated from heap memory, through:
 SDL_8SVX_freeSet(set);
 ```
 
-Generating an instrument
-------------------------
+Composing an instrument for audio playback
+------------------------------------------
 Using the set API, we can retrieve an instrument from the IFF file to render
 samples from to the audio buffer:
 
