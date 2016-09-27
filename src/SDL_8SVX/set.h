@@ -36,30 +36,100 @@ typedef struct SDL_8SVX_Set SDL_8SVX_Set;
 #include <lib8svx/8svxinstrument.h>
 #include "instrument.h"
 
+/**
+ * @brief An encapsulation of a set of instruments that originate from an IFF/8SVX file.
+ */
 struct SDL_8SVX_Set
 {
+    /** Reference to a parsed chunk originating from an IFF file */
     IFF_Chunk *chunk;
+    
+    /** An array extracted 8SVX instruments from an IFF file */
     _8SVX_Instrument **_8svxInstruments;
+    
+    /** Specifies the length of the 8SVX instruments array */
     unsigned int instrumentsLength;
+    
+    /* Indicates whether the chunk must be deallocated while freeing the set */
     int mustFreeChunk;
 };
 
+/**
+ * Initializes a preallocated set by opening a file with a specified filename.
+ *
+ * @param set A preallocated set
+ * @param filename Path to an IFF file to open
+ * @return TRUE if the initialization succeeded, else FALSE
+ */
 int SDL_8SVX_initSetFromFilename(SDL_8SVX_Set *set, const char *filename);
 
+/**
+ * Initializes a preallocated set by opening a file with a specific file
+ * descriptor.
+ *
+ * @param set A preallocated set
+ * @param file File descriptor
+ * @return TRUE if the initialization succeeded, else FALSE
+ */
 int SDL_8SVX_initSetFromFd(SDL_8SVX_Set *set, FILE *file);
 
+/**
+ * Initializes a preallocated set by parsing an IFF chunk.
+ *
+ * @param set A preallocated set
+ * @param chunk IFF chunk originating from a parsed file
+ * @param mustFreeChunk Indicates whether the provided chunk must be freed from memory while freeing the set
+ */
 int SDL_8SVX_initSetFromIFFChunk(SDL_8SVX_Set *set, IFF_Chunk *chunk, int mustFreeChunk);
 
+/**
+ * Creates a set by opening a file with a specified filename.
+ *
+ * @param filename Path to an IFF file to open
+ * @return An SDL_8SVX_Set instance or NULL in case of an error. The resulting set must be freed with SDL_8SVX_freeSet()
+ */
 SDL_8SVX_Set *SDL_8SVX_createSetFromFilename(const char *filename);
 
+/**
+ * Creates a set by opening a file with a specific file descriptor.
+ *
+ * @param file File descriptor
+ * @return An SDL_8SVX_Set instance or NULL in case of an error. The resulting set must be freed with SDL_8SVX_freeSet()
+ */
 SDL_8SVX_Set *SDL_8SVX_createSetFromFd(FILE *file);
 
+/**
+ * Creates a set by parsing an IFF chunk.
+ *
+ * @param chunk IFF chunk originating from a parsed file
+ * @param mustFreeChunk Indicates whether the provided chunk must be freed from memory while freeing the set
+ * @return An SDL_8SVX_Set instance or NULL in case of an error. The resulting set must be freed with SDL_8SVX_freeSet()
+ */
 SDL_8SVX_Set *SDL_8SVX_createSetFromIFFChunk(IFF_Chunk *chunk, int mustFreeChunk);
 
+/**
+ * Creates an resampled instrument from a given an instrument in a set.
+ *
+ * @param set An SDL_8SVX_Set containing instruments
+ * @param index Index of an instrument in the set
+ * @param format Defines the sample format of the instruments
+ * @param frequency Defines the sample frequency of the instrument samples
+ * @return An SDL_8SVX_Instrument instance or NULL in case of an error. The result must be freed by invoking SDL_8SVX_freeInstrument()
+ */
 SDL_8SVX_Instrument *SDL_8SVX_createInstrumentFromSet(const SDL_8SVX_Set *set, const unsigned int index, Uint16 format, int frequency);
 
+/**
+ * Clears all properties of a set from memory.
+ *
+ * @param set An SDL_8SVX_Set containing instruments
+ */
 void SDL_8SVX_cleanupSet(SDL_8SVX_Set *set);
 
+/**
+ * Frees a set from memory.
+ *
+ * @param set An SDL_8SVX_Set containing instruments
+ */
 void SDL_8SVX_freeSet(SDL_8SVX_Set *set);
 
 #ifdef __cplusplus

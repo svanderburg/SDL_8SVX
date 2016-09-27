@@ -30,17 +30,41 @@ typedef struct SDL_8SVX_Instrument SDL_8SVX_Instrument;
 #include <lib8svx/8svxinstrument.h>
 #include <SDL_mixer.h>
 
+/**
+ * @brief Encapsulates the properties of a resampled instrument
+ */
 struct SDL_8SVX_Instrument
 {
+    /** Reference to the 8SVX intrument from which this instrument is generated */
     _8SVX_Instrument *instrument;
+    
+    /** Array of mix chunks each representing audio samples for each octave */
     Mix_Chunk *mixChunks;
+    
+    /** Contains the length of the mix chunks array */
     unsigned int mixChunksLength;
+    
+    /** Defines the sample format of the instruments */
     Uint16 format;
+    
+    /** Defines the sample frequency of the instrument samples */
     int frequency;
 };
 
+/**
+ * Creates an resampled instrument from a given 8SVX instrument.
+ *
+ * @param format Defines the sample format of the instruments
+ * @param frequency Defines the sample frequency of the instrument samples
+ * @return An SDL_8SVX_Instrument instance or NULL in case of an error. The result must be freed by invoking SDL_8SVX_freeInstrument()
+ */
 SDL_8SVX_Instrument *SDL_8SVX_createInstrument(_8SVX_Instrument *instrument, Uint16 format, int frequency);
 
+/**
+ * Frees the resampled instrument from memory
+ *
+ * @param instrument An SDL_8SVX_Instrument instance
+ */
 void SDL_8SVX_freeInstrument(SDL_8SVX_Instrument *instrument);
 
 #endif
