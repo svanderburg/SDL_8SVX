@@ -33,25 +33,31 @@
 static void printUsage(const char *command)
 {
     printf("Usage: %s [OPTION] [file.8SVX]\n\n", command);
-    
-    printf("The command `8svxviewer' plays 8SVX instrument samples stored inside an IFF\n");
-    printf("file. If no file is given, it reads from the standard input.\n\n");
-    
-    printf("Options:\n");
-    printf("  -i, --instrument-number=NUM  Play samples from the provided 8SVX instrument\n");
-    printf("                               entry in the IFF file (by default, it examines\n");
-    printf("                               all instruments)\n");
-    printf("  -s, --sample-number=NUM      Play the n-th sample from an 8SVX instrument (by\n");
-    printf("                               default, it plays all samples)\n");
-    printf("      --frequency=NUM          Sample frequency (defaults to: 22050)\n");
-    printf("  -h, --help                   Shows the usage of the command to the user\n");
-    printf("  -v, --version                Shows the version of the command to the user\n");
+
+    puts(
+    "The command `8svxviewer' plays 8SVX instrument samples stored inside an IFF\n"
+    "file. If no file is given, it reads from the standard input.\n\n"
+
+    "Options:\n"
+    "  -i, --instrument-number=NUM  Play samples from the provided 8SVX instrument\n"
+    "                               entry in the IFF file (by default, it examines\n"
+    "                               all instruments)"
+    );
+    puts(
+    "  -s, --sample-number=NUM      Play the n-th sample from an 8SVX instrument (by\n"
+    "                               default, it plays all samples)\n"
+    "      --frequency=NUM          Sample frequency (defaults to: 22050)\n"
+    "  -h, --help                   Shows the usage of the command to the user\n"
+    "  -v, --version                Shows the version of the command to the user"
+    );
 }
 
 static void printVersion(const char *command)
 {
-    printf("%s (" PACKAGE_NAME ") " PACKAGE_VERSION "\n\n", command);
-    printf("Copyright (C) 2012-2015 Sander van der Burg\n");
+    printf(
+    "%s (" PACKAGE_NAME ") " PACKAGE_VERSION "\n\n"
+    "Copyright (C) 2012-2015 Sander van der Burg\n"
+    , command);
 }
 
 int main(int argc, char *argv[])
