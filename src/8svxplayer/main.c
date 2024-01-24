@@ -107,13 +107,13 @@ int main(int argc, char *argv[])
                 return 0;
         }
     }
-    
+
     /* Validate non options */
-    
+
     if(optind >= argc)
         filename = NULL;
     else
         filename = argv[optind];
-    
+
     return SDL_8SVX_play8SVXSamples(filename, playAllInstruments, instrumentNumber, playAllSamples, sampleNumber, frequency);
 }

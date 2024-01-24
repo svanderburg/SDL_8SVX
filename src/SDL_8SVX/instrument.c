@@ -36,19 +36,19 @@ static Mix_Chunk *createMixChunks(_8SVX_Instrument *instrument, unsigned int *mi
     _8SVX_Sample *samples = _8SVX_extractSamples(instrument, &samplesLength);
     Mix_Chunk *mixChunks = (Mix_Chunk*)malloc(samplesLength * sizeof(Mix_Chunk));
     unsigned int i;
-    
+
     for(i = 0; i < samplesLength; i++)
     {
-	Mix_Chunk *mixChunk = &mixChunks[i];
-	
-	mixChunk->allocated = FALSE;
-	mixChunk->abuf = (Uint8*)samples[i].body;
-	mixChunk->alen = samples[i].sampleSize;
-	mixChunk->volume = instrument->voice8Header->volume * 128 / _8SVX_MAX_VOLUME;
+        Mix_Chunk *mixChunk = &mixChunks[i];
+
+        mixChunk->allocated = FALSE;
+        mixChunk->abuf = (Uint8*)samples[i].body;
+        mixChunk->alen = samples[i].sampleSize;
+        mixChunk->volume = instrument->voice8Header->volume * 128 / _8SVX_MAX_VOLUME;
     }
-    
+
     free(samples);
-    
+
     *mixChunksLength = samplesLength;
     return mixChunks;
 }
@@ -63,26 +63,26 @@ static void resampleMixChunkFrequency(_8SVX_Instrument *instrument, Mix_Chunk *m
     int outBufferLen = ceil(mixChunk->alen * factor);
     float *outBuffer = (float*)malloc(outBufferLen * sizeof(float));
     Uint8 *abuf = (Uint8*)malloc(outBufferLen * sizeof(Uint8));
-    
+
     /* Open resample handle */
     handle = resample_open(TRUE, factor, factor);
-    
+
     /* Convert bytes to floats */
     for(i = 0; i < mixChunk->alen; i++)
-	inBuffer[i] = ((Sint8)mixChunk->abuf[i] + 0.5f) / 127.5f;
+        inBuffer[i] = ((Sint8)mixChunk->abuf[i] + 0.5f) / 127.5f;
 
     /* Do resampling */
     resample_process(handle, factor, inBuffer, mixChunk->alen, TRUE, &inBufferUsed, outBuffer, outBufferLen);
-    
+
     /* Convert floats to bytes */
     for(i = 0; i < outBufferLen; i++)
-	abuf[i] = (127.5f * outBuffer[i]) - 0.5f;
-    
+        abuf[i] = (127.5f * outBuffer[i]) - 0.5f;
+
     /* Set the chunk data to the resampled value */
     mixChunk->allocated = TRUE;
     mixChunk->alen = outBufferLen;
     mixChunk->abuf = abuf;
-    
+
     /* Cleanup */
     resample_close(handle);
     free(inBuffer);
@@ -92,14 +92,14 @@ static void resampleMixChunkFrequency(_8SVX_Instrument *instrument, Mix_Chunk *m
 static void resampleMixChunkFormat(Mix_Chunk *mixChunk, Uint16 format, int frequency)
 {
     SDL_AudioCVT cvt;
-    
+
     SDL_BuildAudioCVT(&cvt, AUDIO_S8, 1, frequency, format, 1, frequency);
     cvt.buf = malloc(mixChunk->alen * cvt.len_mult);
     cvt.len = mixChunk->alen;
     memcpy(cvt.buf, mixChunk->abuf, mixChunk->alen);
-    
+
     SDL_ConvertAudio(&cvt);
-    
+
     free(mixChunk->abuf);
     mixChunk->abuf = cvt.buf;
     mixChunk->alen = mixChunk->alen * cvt.len_mult;
@@ -108,22 +108,22 @@ static void resampleMixChunkFormat(Mix_Chunk *mixChunk, Uint16 format, int frequ
 SDL_8SVX_Instrument *SDL_8SVX_createInstrument(_8SVX_Instrument *instrument, Uint16 format, int frequency)
 {
     SDL_8SVX_Instrument *_8svxInstrument = (SDL_8SVX_Instrument*)malloc(sizeof(SDL_8SVX_Instrument));
-    
+
     if(_8svxInstrument != NULL)
     {
         unsigned int i;
-        
+
         /* Attach parameters */
         _8svxInstrument->instrument = instrument;
         _8svxInstrument->format = format;
         _8svxInstrument->frequency = frequency;
-        
+
         /* Decompress the instrument body chunk */
         _8SVX_unpackFibonacciDelta(instrument);
 
         /* Create mix chunks out of the sample data */
         _8svxInstrument->mixChunks = createMixChunks(instrument, &_8svxInstrument->mixChunksLength);
-        
+
         /* Resample the mix chunks */
         for(i = 0; i < _8svxInstrument->mixChunksLength; i++)
         {
@@ -132,7 +132,7 @@ SDL_8SVX_Instrument *SDL_8SVX_createInstrument(_8SVX_Instrument *instrument, Uin
             resampleMixChunkFormat(mixChunk, format, frequency);
         }
     }
-    
+
     return _8svxInstrument;
 }
 

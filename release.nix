@@ -9,9 +9,9 @@
 
 let
   pkgs = import nixpkgs {};
-  
+
   version = builtins.readFile ./version;
-  
+
   jobs = rec {
     tarball =
       with pkgs;
@@ -26,15 +26,15 @@ let
         inherit version officialRelease;
         dontBuild = false;
 
-        buildInputs = [ pkgconfig libiff lib8svx libresample SDL2 SDL2_mixer help2man ];
+        buildInputs = [ pkg-config libiff lib8svx libresample SDL2 SDL2_mixer help2man ];
         LIBS = "-lgcc_s";
         CFLAGS = "-ansi -pedantic -Wall";
       };
-      
+
     build =
       pkgs.lib.genAttrs systems (system:
         with import nixpkgs { inherit system; };
-        
+
         let
           libiff = builtins.getAttr system (libiffJobset.build);
           lib8svx = builtins.getAttr system (lib8svxJobset.build);
@@ -43,7 +43,7 @@ let
           name = "SDL_8SVX";
           inherit version;
           src = tarball;
-          buildInputs = [ pkgconfig libiff lib8svx libresample SDL2 SDL2_mixer ];
+          buildInputs = [ pkg-config libiff lib8svx libresample SDL2 SDL2_mixer ];
           LIBS = "-lgcc_s";
           CFLAGS = "-ansi -pedantic -Wall";
         }

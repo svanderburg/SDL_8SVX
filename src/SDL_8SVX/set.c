@@ -34,25 +34,25 @@ int SDL_8SVX_initSetFromFilename(SDL_8SVX_Set *set, const char *filename)
     return status;
 }
 
-int SDL_8SVX_initSetFromFd(SDL_8SVX_Set *set, FILE *file)
+IFF_Bool SDL_8SVX_initSetFromFd(SDL_8SVX_Set *set, FILE *file)
 {
     IFF_Chunk *chunk = _8SVX_readFd(file);
     return SDL_8SVX_initSetFromIFFChunk(set, chunk, TRUE);
 }
 
-int SDL_8SVX_initSetFromIFFChunk(SDL_8SVX_Set *set, IFF_Chunk *chunk, int mustFreeChunk)
+IFF_Bool SDL_8SVX_initSetFromIFFChunk(SDL_8SVX_Set *set, IFF_Chunk *chunk, int mustFreeChunk)
 {
     set->chunk = chunk;
     set->mustFreeChunk = mustFreeChunk;
     set->_8svxInstruments = _8SVX_extractInstruments(chunk, &set->instrumentsLength);
-    
+
     return _8SVX_checkInstruments(chunk, set->_8svxInstruments, set->instrumentsLength);
 }
 
 SDL_8SVX_Set *SDL_8SVX_createSetFromFilename(const char *filename)
 {
     SDL_8SVX_Set *set = (SDL_8SVX_Set*)malloc(sizeof(SDL_8SVX_Set));
-    
+
     if(set != NULL)
     {
         if(!SDL_8SVX_initSetFromFilename(set, filename))
@@ -61,14 +61,14 @@ SDL_8SVX_Set *SDL_8SVX_createSetFromFilename(const char *filename)
             return NULL;
         }
     }
-    
+
     return set;
 }
 
 SDL_8SVX_Set *SDL_8SVX_createSetFromFd(FILE *file)
 {
     SDL_8SVX_Set *set = (SDL_8SVX_Set*)malloc(sizeof(SDL_8SVX_Set));
-    
+
     if(set != NULL)
     {
         if(!SDL_8SVX_initSetFromFd(set, file))
@@ -77,14 +77,14 @@ SDL_8SVX_Set *SDL_8SVX_createSetFromFd(FILE *file)
             return NULL;
         }
     }
-    
+
     return set;
 }
 
 SDL_8SVX_Set *SDL_8SVX_createSetFromIFFChunk(IFF_Chunk *chunk, int mustFreeChunk)
 {
     SDL_8SVX_Set *set = (SDL_8SVX_Set*)malloc(sizeof(SDL_8SVX_Set));
-    
+
     if(set != NULL)
     {
         if(!SDL_8SVX_initSetFromIFFChunk(set, chunk, mustFreeChunk))
@@ -93,7 +93,7 @@ SDL_8SVX_Set *SDL_8SVX_createSetFromIFFChunk(IFF_Chunk *chunk, int mustFreeChunk
             return NULL;
         }
     }
-    
+
     return set;
 }
 
@@ -108,7 +108,7 @@ SDL_8SVX_Instrument *SDL_8SVX_createInstrumentFromSet(const SDL_8SVX_Set *set, c
 void SDL_8SVX_cleanupSet(SDL_8SVX_Set *set)
 {
     _8SVX_freeInstruments(set->_8svxInstruments, set->instrumentsLength);
-    
+
     if(set->mustFreeChunk)
         _8SVX_free(set->chunk);
 }

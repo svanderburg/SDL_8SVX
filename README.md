@@ -25,9 +25,11 @@ Installation
 Compilation and installation of this library is straight forward, by using the
 standard GNU autotools build instructions:
 
-    $ ./configure
-    $ make
-    $ make install
+```bash
+$ ./configure
+$ make
+$ make install
+```
 
 More details about the installation process can be found in the `INSTALL` file
 included in this package.
@@ -56,7 +58,7 @@ SDL_8SVX_Set *set = SDL_8SVX_createSetFromFilename("somefile.IFF");
 if(set != NULL && set->instrumentsLength > 0)
 {
     /* Open an instrument */
-    
+
     return 0;
 }
 else
@@ -104,10 +106,10 @@ unsigned int i;
 for(i = 0; i < instrument->mixChunksLength; i++)
 {
     int channel;
-    
+
     /* Fetch a sample */
     Mix_Chunk *mixChunk = &instrument->mixChunks[i];
-    
+
     /* Play the sample on channel 0 */
     if((channel = Mix_PlayChannel(-1, mixChunk, 0)) == -1)
     {
@@ -116,7 +118,8 @@ for(i = 0; i < instrument->mixChunksLength; i++)
     }
 
     /* Wait for the channel to finish playing */
-    while(Mix_Playing(channel) != 0);
+    while(Mix_Playing(channel) != 0)
+        ;
 }
 ```
 
@@ -137,7 +140,9 @@ SDL_8SVX_freeInstrument(instrument);
 This package also includes a command-line utility: `8svxplayer` that exposes
 most of the API's features as command-line options. For more information, run:
 
-    $ 8svxplayer --help
+```bash
+$ 8svxplayer --help
+```
 
 License
 =======

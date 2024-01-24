@@ -37,16 +37,16 @@ struct SDL_8SVX_Instrument
 {
     /** Reference to the 8SVX intrument from which this instrument is generated */
     _8SVX_Instrument *instrument;
-    
+
     /** Array of mix chunks each representing audio samples for each octave */
     Mix_Chunk *mixChunks;
-    
+
     /** Contains the length of the mix chunks array */
     unsigned int mixChunksLength;
-    
+
     /** Defines the sample format of the instruments */
     Uint16 format;
-    
+
     /** Defines the sample frequency of the instrument samples */
     int frequency;
 };

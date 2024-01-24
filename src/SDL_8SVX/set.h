@@ -43,15 +43,15 @@ struct SDL_8SVX_Set
 {
     /** Reference to a parsed chunk originating from an IFF file */
     IFF_Chunk *chunk;
-    
+
     /** An array extracted 8SVX instruments from an IFF file */
     _8SVX_Instrument **_8svxInstruments;
-    
+
     /** Specifies the length of the 8SVX instruments array */
     unsigned int instrumentsLength;
-    
+
     /* Indicates whether the chunk must be deallocated while freeing the set */
-    int mustFreeChunk;
+    IFF_Bool mustFreeChunk;
 };
 
 /**
@@ -61,7 +61,7 @@ struct SDL_8SVX_Set
  * @param filename Path to an IFF file to open
  * @return TRUE if the initialization succeeded, else FALSE
  */
-int SDL_8SVX_initSetFromFilename(SDL_8SVX_Set *set, const char *filename);
+IFF_Bool SDL_8SVX_initSetFromFilename(SDL_8SVX_Set *set, const char *filename);
 
 /**
  * Initializes a preallocated set by opening a file with a specific file
@@ -71,7 +71,7 @@ int SDL_8SVX_initSetFromFilename(SDL_8SVX_Set *set, const char *filename);
  * @param file File descriptor
  * @return TRUE if the initialization succeeded, else FALSE
  */
-int SDL_8SVX_initSetFromFd(SDL_8SVX_Set *set, FILE *file);
+IFF_Bool SDL_8SVX_initSetFromFd(SDL_8SVX_Set *set, FILE *file);
 
 /**
  * Initializes a preallocated set by parsing an IFF chunk.
