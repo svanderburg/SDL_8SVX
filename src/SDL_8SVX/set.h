@@ -55,15 +55,6 @@ struct SDL_8SVX_Set
 };
 
 /**
- * Initializes a preallocated set by opening a file with a specified filename.
- *
- * @param set A preallocated set
- * @param filename Path to an IFF file to open
- * @return TRUE if the initialization succeeded, else FALSE
- */
-IFF_Bool SDL_8SVX_initSetFromFilename(SDL_8SVX_Set *set, const char *filename);
-
-/**
  * Initializes a preallocated set by opening a file with a specific file
  * descriptor.
  *
@@ -74,21 +65,32 @@ IFF_Bool SDL_8SVX_initSetFromFilename(SDL_8SVX_Set *set, const char *filename);
 IFF_Bool SDL_8SVX_initSetFromFd(SDL_8SVX_Set *set, FILE *file);
 
 /**
+ * Initializes a preallocated set by opening a file with a specified filename.
+ *
+ * @param set A preallocated set
+ * @param filename Path to an IFF file to open
+ * @return TRUE if the initialization succeeded, else FALSE
+ */
+IFF_Bool SDL_8SVX_initSetFromFilename(SDL_8SVX_Set *set, const char *filename);
+
+/**
+ * Initializes a preallocated set by opening a file with a specified filename or by reading from the standard input when no filename is given.
+ *
+ * @param set A preallocated set
+ * @param filename Path to an IFF file to open or NULL to read from the standard input
+ * @return TRUE if the initialization succeeded, else FALSE
+ */
+IFF_Bool SDL_8SVX_initSet(SDL_8SVX_Set *set, const char *filename);
+
+/**
  * Initializes a preallocated set by parsing an IFF chunk.
  *
  * @param set A preallocated set
  * @param chunk IFF chunk originating from a parsed file
  * @param mustFreeChunk Indicates whether the provided chunk must be freed from memory while freeing the set
+ * @return TRUE if the set was successfully generated, else FALSE
  */
-int SDL_8SVX_initSetFromIFFChunk(SDL_8SVX_Set *set, IFF_Chunk *chunk, int mustFreeChunk);
-
-/**
- * Creates a set by opening a file with a specified filename.
- *
- * @param filename Path to an IFF file to open
- * @return An SDL_8SVX_Set instance or NULL in case of an error. The resulting set must be freed with SDL_8SVX_freeSet()
- */
-SDL_8SVX_Set *SDL_8SVX_createSetFromFilename(const char *filename);
+IFF_Bool SDL_8SVX_initSetFromIFFChunk(SDL_8SVX_Set *set, IFF_Chunk *chunk, IFF_Bool mustFreeChunk);
 
 /**
  * Creates a set by opening a file with a specific file descriptor.
@@ -99,13 +101,29 @@ SDL_8SVX_Set *SDL_8SVX_createSetFromFilename(const char *filename);
 SDL_8SVX_Set *SDL_8SVX_createSetFromFd(FILE *file);
 
 /**
+ * Creates a set by opening a file with a specified filename.
+ *
+ * @param filename Path to an IFF file to open
+ * @return An SDL_8SVX_Set instance or NULL in case of an error. The resulting set must be freed with SDL_8SVX_freeSet()
+ */
+SDL_8SVX_Set *SDL_8SVX_createSetFromFilename(const char *filename);
+
+/**
+ * Creates a set by opening a file with a specified filename or from the standard input when no filename is provided.
+ *
+ * @param filename Path to an IFF file to open or NULL to read from the standard input
+ * @return An SDL_8SVX_Set instance or NULL in case of an error. The resulting set must be freed with SDL_8SVX_freeSet()
+ */
+SDL_8SVX_Set *SDL_8SVX_createSet(const char *filename);
+
+/**
  * Creates a set by parsing an IFF chunk.
  *
  * @param chunk IFF chunk originating from a parsed file
  * @param mustFreeChunk Indicates whether the provided chunk must be freed from memory while freeing the set
  * @return An SDL_8SVX_Set instance or NULL in case of an error. The resulting set must be freed with SDL_8SVX_freeSet()
  */
-SDL_8SVX_Set *SDL_8SVX_createSetFromIFFChunk(IFF_Chunk *chunk, int mustFreeChunk);
+SDL_8SVX_Set *SDL_8SVX_createSetFromIFFChunk(IFF_Chunk *chunk, IFF_Bool mustFreeChunk);
 
 /**
  * Creates an resampled instrument from a given an instrument in a set.

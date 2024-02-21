@@ -80,15 +80,11 @@ static int playSamplesFromInstrument(SDL_8SVX_Instrument *instrument, unsigned i
 
 int SDL_8SVX_play8SVXSamples(const char *filename, unsigned int playAllInstruments, unsigned int instrumentNumber, unsigned int playAllSamples, unsigned int sampleNumber, int frequency)
 {
-    Uint16 format = AUDIO_S16SYS;
-    SDL_8SVX_Set *set;
     int exitStatus = 0;
+    Uint16 format = AUDIO_S16SYS;
 
     /* Open the 8SVX file and generate a set from it*/
-    if(filename == NULL)
-        set = SDL_8SVX_createSetFromFd(stdin);
-    else
-        set = SDL_8SVX_createSetFromFilename(filename);
+    SDL_8SVX_Set *set = SDL_8SVX_createSet(filename);
 
     if(set == NULL)
     {

@@ -26,7 +26,13 @@
 #include <stdlib.h>
 #include <lib8svx/8svx.h>
 
-int SDL_8SVX_initSetFromFilename(SDL_8SVX_Set *set, const char *filename)
+IFF_Bool SDL_8SVX_initSetFromFd(SDL_8SVX_Set *set, FILE *file)
+{
+    IFF_Chunk *chunk = _8SVX_readFd(file);
+    return SDL_8SVX_initSetFromIFFChunk(set, chunk, TRUE);
+}
+
+IFF_Bool SDL_8SVX_initSetFromFilename(SDL_8SVX_Set *set, const char *filename)
 {
     FILE *file = fopen(filename, "rb");
     int status = SDL_8SVX_initSetFromFd(set, file);
@@ -34,35 +40,21 @@ int SDL_8SVX_initSetFromFilename(SDL_8SVX_Set *set, const char *filename)
     return status;
 }
 
-IFF_Bool SDL_8SVX_initSetFromFd(SDL_8SVX_Set *set, FILE *file)
+IFF_Bool SDL_8SVX_initSet(SDL_8SVX_Set *set, const char *filename)
 {
-    IFF_Chunk *chunk = _8SVX_readFd(file);
-    return SDL_8SVX_initSetFromIFFChunk(set, chunk, TRUE);
+    if(filename == NULL)
+        return SDL_8SVX_initSetFromFd(set, stdin);
+    else
+        return SDL_8SVX_initSetFromFilename(set, filename);
 }
 
-IFF_Bool SDL_8SVX_initSetFromIFFChunk(SDL_8SVX_Set *set, IFF_Chunk *chunk, int mustFreeChunk)
+IFF_Bool SDL_8SVX_initSetFromIFFChunk(SDL_8SVX_Set *set, IFF_Chunk *chunk, IFF_Bool mustFreeChunk)
 {
     set->chunk = chunk;
     set->mustFreeChunk = mustFreeChunk;
     set->_8svxInstruments = _8SVX_extractInstruments(chunk, &set->instrumentsLength);
 
     return _8SVX_checkInstruments(chunk, set->_8svxInstruments, set->instrumentsLength);
-}
-
-SDL_8SVX_Set *SDL_8SVX_createSetFromFilename(const char *filename)
-{
-    SDL_8SVX_Set *set = (SDL_8SVX_Set*)malloc(sizeof(SDL_8SVX_Set));
-
-    if(set != NULL)
-    {
-        if(!SDL_8SVX_initSetFromFilename(set, filename))
-        {
-            SDL_8SVX_freeSet(set);
-            return NULL;
-        }
-    }
-
-    return set;
 }
 
 SDL_8SVX_Set *SDL_8SVX_createSetFromFd(FILE *file)
@@ -81,7 +73,39 @@ SDL_8SVX_Set *SDL_8SVX_createSetFromFd(FILE *file)
     return set;
 }
 
-SDL_8SVX_Set *SDL_8SVX_createSetFromIFFChunk(IFF_Chunk *chunk, int mustFreeChunk)
+SDL_8SVX_Set *SDL_8SVX_createSetFromFilename(const char *filename)
+{
+    SDL_8SVX_Set *set = (SDL_8SVX_Set*)malloc(sizeof(SDL_8SVX_Set));
+
+    if(set != NULL)
+    {
+        if(!SDL_8SVX_initSetFromFilename(set, filename))
+        {
+            SDL_8SVX_freeSet(set);
+            return NULL;
+        }
+    }
+
+    return set;
+}
+
+SDL_8SVX_Set *SDL_8SVX_createSet(const char *filename)
+{
+    SDL_8SVX_Set *set = (SDL_8SVX_Set*)malloc(sizeof(SDL_8SVX_Set));
+
+    if(set != NULL)
+    {
+        if(!SDL_8SVX_initSet(set, filename))
+        {
+            SDL_8SVX_freeSet(set);
+            return NULL;
+        }
+    }
+
+    return set;
+}
+
+SDL_8SVX_Set *SDL_8SVX_createSetFromIFFChunk(IFF_Chunk *chunk, IFF_Bool mustFreeChunk)
 {
     SDL_8SVX_Set *set = (SDL_8SVX_Set*)malloc(sizeof(SDL_8SVX_Set));
 
